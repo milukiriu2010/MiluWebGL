@@ -83,7 +83,7 @@ onload = function(){
     // アスペクト比
     //   canvasのサイズをそのまま
     // ------------------------------------------
-    m.perspective(90, c.width / c.height, 0.1, 100, pMatrix);
+    m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
     
     // ビュー×プロジェクション座標変換行列
     m.multiply(pMatrix, vMatrix, tmpMatrix);
@@ -109,9 +109,9 @@ onload = function(){
 	    // カウンタを元にラジアンを算出
 	    var rad = (count % 360) * Math.PI / 180;
 	    
-        // モデル座標変換行列の生成(Y軸による回転)
+        // モデル座標変換行列の生成(Y,Z軸による回転)
         m.identity(mMatrix);
-        m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
+        m.rotate(mMatrix, rad, [0, 1, 1], mMatrix);
         m.multiply(tmpMatrix, mMatrix, mvpMatrix);
         gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
         
