@@ -21,16 +21,22 @@ var qt = q.identity(q.create());
 function mouseMove(e){
 	var cw = c.width;
 	var ch = c.height;
+	// 1/canvasの対角線の長さ
 	var wh = 1 / Math.sqrt(cw * cw + ch * ch);
+	// canvas中央からみたクリック座標
 	var x = e.clientX - c.offsetLeft - cw * 0.5;
 	var y = e.clientY - c.offsetTop - ch * 0.5;
+	// canvas中央からみたクリック位置の距離
 	var sq = Math.sqrt(x * x + y * y);
+	// ここがよくわからない
+	// "クリック位置/対角線の長さ"を回転角度にしている？
 	var r = sq * 2.0 * Math.PI * wh;
 	if(sq != 1){
 		sq = 1 / sq;
 		x *= sq;
 		y *= sq;
 	}
+	// qtの値を変えている
 	q.rotate(r, [y, x, 0.0], qt);
 }
 
