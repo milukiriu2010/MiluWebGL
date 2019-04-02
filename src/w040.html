@@ -79,10 +79,8 @@ onload = function(){
 	// テクスチャ関連
 	var texture0 = null;
 	var texture1 = null;
-	create_texture('./img/texture_w40_0.png');
-	create_texture('./img/texture_w40_1.png');
-	//create_texture('https://wgld.org/s/sample_027/texture0.png');
-	//create_texture('https://wgld.org/s/sample_027/texture1.png');
+	create_texture('./img/texture_w40_0.png',0);
+	create_texture('./img/texture_w40_1.png',1);
 	gl.activeTexture(gl.TEXTURE0);
 	
 	// フレームバッファオブジェクトの取得
