@@ -153,16 +153,23 @@ onload = function(){
 		gl.enable(gl.STENCIL_TEST);
 		
 		// 描画:1
+		// Z軸を奥にずらしてレンダリング
+		// 基準値１
 		gl.stencilFunc(gl.ALWAYS, 1, ~0);
 		gl.stencilOp(gl.KEEP, gl.REPLACE, gl.REPLACE);
 		render([-0.25, 0.25, -0.5]);
 		
 		// 描画:2
+		// Z値は0.0
+		// 基準値１⇒重なっていない部分
+		// 基準値２⇒重なっている部分
 		gl.stencilFunc(gl.ALWAYS, 0, ~0);
 		gl.stencilOp(gl.KEEP, gl.INCR, gl.INCR);
 		render([0.0, 0.0, 0.0]);
 		
 		// 描画:3
+		// Z軸は手前にずらしてレンダリング
+		// 基準値２の部分のみ描画
 		gl.stencilFunc(gl.EQUAL, 2, ~0);
 		gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
 		render([0.25, -0.25, 0.5]);
