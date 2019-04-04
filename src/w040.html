@@ -372,6 +372,7 @@ onload = function(){
 		gl.bindRenderbuffer(gl.RENDERBUFFER, depthRenderBuffer);
 		
 		// レンダーバッファを深度バッファとして設定
+		// 16ビット深度を持つ深度バッファとして利用する
 		gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
 		
 		// フレームバッファにレンダーバッファを関連付ける
