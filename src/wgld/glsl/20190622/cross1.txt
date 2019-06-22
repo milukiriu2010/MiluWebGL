@@ -1,0 +1,11 @@
+// https://qiita.com/doxas/items/25bb50a3db85129e2980
+
+precision mediump float;
+uniform float t; // time
+uniform vec2  r; // resolution
+
+void main(void){
+    vec2 p = (gl_FragCoord.xy * 2.0 - r) / min(r.x, r.y);
+    float f = 0.001 / (abs(p.x) * abs(p.y)); // Å© 0.001 ÇäÑÇÈ
+    gl_FragColor = vec4(vec3(f), 1.0);
+}

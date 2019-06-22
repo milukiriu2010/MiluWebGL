@@ -1,0 +1,27 @@
+precision mediump float;
+uniform float t; // time
+uniform vec2  r; // resolution
+
+const float PI = 3.1415926;
+const vec3 lightColor = vec3(0.95, 0.95, 0.5);  // ”wŒi‚ÌŒãŒõ‚ÌF
+const vec3 backColor = vec3(0.95, 0.25, 0.25);  // ”wŒi‚Ì‰º’n‚ÌF
+
+// ”wŒi‚ÌŒãŒõ‚ğ•`‚­
+void sunrise(vec2 p, inout vec3 i){
+    float f = atan(p.y, p.x) + t;
+    float fs = sin(f * 10.0);
+    i = mix(lightColor, backColor, fs);
+}
+
+void main(){
+    // À•W‚ğ³‹K‰»‚·‚é
+    vec2 p = (gl_FragCoord.xy * 2.0 - r) / min(r.x, r.y);
+
+    // ÅI“I‚Éo—Í‚³‚ê‚éF
+    vec3 destColor = vec3(1.0);
+
+    // ”wŒi‚ÌŒãŒõ‚ğ•`‚­
+    sunrise(p, destColor);
+
+    gl_FragColor = vec4(destColor, 1.0);
+}

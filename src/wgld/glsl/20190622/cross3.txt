@@ -1,0 +1,12 @@
+// https://qiita.com/doxas/items/25bb50a3db85129e2980
+
+precision mediump float;
+uniform float t; // time
+uniform vec2  r; // resolution
+
+void main(void){
+    vec2 p = (gl_FragCoord.xy * 2.0 - r) / min(r.x, r.y);
+    vec2 q = mod(p, 0.2) - 0.1;          // mod を通してから一度別の変数に座標を入れる
+    float f = 0.2 / abs(q.x) * abs(q.y); // その変数を使ってさっきと同じ計算をする
+    gl_FragColor = vec4(vec3(f), 1.0);
+}

@@ -1,0 +1,10 @@
+precision mediump float;
+uniform float t; // time
+uniform vec2  r; // resolution
+
+void main(void){
+    vec2 p = (gl_FragCoord.xy * 2.0 - r) / min(r.x, r.y);
+    float rad = atan(p.y,p.x) + t;
+    float l = 0.2 / sin(rad*10.0);
+    gl_FragColor = vec4(vec3(abs(l)), 1.0);
+}
