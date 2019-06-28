@@ -3,6 +3,8 @@ uniform float t;
 uniform vec2  m;
 uniform vec2  r;
 
+// —Î  : hsv(0.25, 1.0, 1.0)
+// …F: hsv(0.50, 1.0, 1.0)
 vec3 hsv(float h, float s, float v){
 	vec4 t = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
 	vec3 p = abs(fract(vec3(h) + t.xyz) * 6.0 - vec3(t.w));
@@ -14,17 +16,24 @@ void main(void){
 	
 	int j = 0;
 	vec2 x = p + vec2(-0.5, 0.0);
-	//float y = 1.5 - m.x * 0.5;
 	float y = 1.0;
 	vec2 z = vec2(0.0, 0.0);
-	for(int i = 0; i < 360; i++){
+	for(int i = 0; i < 100; i++){
 		j++;
 		if(length(z) > 2.0){break;}
 		z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + x * y;
 	}
 	
-	vec3 rgb = hsv(float(j), 1.0, 1.0);
-	float t = float(j) / 360.0;
-	gl_FragColor = vec4(rgb*t, 1.0);
-	
+	// ”­U‚µ‚È‚¢ê‡‚ÍA•
+	if ( j >= 100 ) {
+		gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+	}
+	// 10ˆÈ‰º‚Å”­U‚µ‚½ê‡‚ÍA”’
+	else if ( j <= 10 ) {
+		gl_FragColor = vec4(1.0,1.0,1.0,1.0);
+	}
+	else {
+		vec3 rgb = hsv(float(j)/360.0, 1.0, 1.0);
+		gl_FragColor = vec4(rgb, 1.0);
+	}
 }
