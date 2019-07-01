@@ -1,0 +1,119 @@
+precision mediump   float;
+
+// 経過時間(ミリ秒を1/1000)
+uniform   float     t;
+// 0.0-1.0に正規化
+uniform   vec2      m;
+// 描画領域の幅・高さ
+uniform   vec2      r;
+// 法線の出力をするかどうか
+//   0: ライティング
+//   1: 法線
+const  int  u_showNormal = 0;
+
+const vec3 cPos = vec3(0.0, 5.0, 5.0);
+const vec3 cDir = vec3(0.0, -0.707, -0.707);
+const vec3 cUp  = vec3(0.0,  0.707, -0.707);
+
+// 光源位置
+const vec3  lightDir = vec3(-0.577, 0.577, 0.577);
+
+// torus distance function
+float distFuncTorus(vec3 p){
+    p.xz -= m * 2.0 - 1.0;
+    vec2 t = vec2(3.0, 1.0);
+    vec2 r = vec2(length(p.xz) - t.x, p.y);
+    return length(r) - t.y;
+}
+
+// floor distance function
+float distFuncFloor(vec3 p){
+    return dot(p, vec3(0.0, 1.0, 0.0)) + 1.0;
+}
+
+// distance function
+float distFunc(vec3 p){
+    float d1 = distFuncTorus(p);
+    float d2 = distFuncFloor(p);
+    return min(d1, d2);
+}
+
+// ---------------------------------------
+// 法線を算出する
+// ---------------------------------------
+//   p: レイとオブジェクトの交点の座標位置
+// ---------------------------------------
+vec3 genNormal(vec3 p){
+    float d = 0.0001;
+    // -----------------------------------------
+    // 正負それぞれにほんの少しだけずらした座標を
+    // distanceFuncに渡すことによって、
+    // その戻り値から勾配を計算している
+    // これにより、各軸に対して
+    // どの程度の傾きになっているかわかる
+    // -----------------------------------------
+    return normalize(vec3(
+        distFunc(p + vec3(  d, 0.0, 0.0)) - distFunc(p + vec3( -d, 0.0, 0.0)),
+        distFunc(p + vec3(0.0,   d, 0.0)) - distFunc(p + vec3(0.0,  -d, 0.0)),
+        distFunc(p + vec3(0.0, 0.0,   d)) - distFunc(p + vec3(0.0, 0.0,  -d))
+    ));
+}
+
+void main() {
+    // ----------------------------------------------------
+    // マウス座標の正規化
+    // ----------------------------------------------------
+    // 0～1の範囲で入ってくるマウスの位置を
+    // -1～1の範囲に正規化している
+    // Y座標は上下逆のため、正負を逆転している
+    // ----------------------------------------------------
+    vec2 m = vec2(m.x*2.0-1.0,-m.y*2.0+1.0);
+    // ----------------------------------------------------
+    // フラグメント座標の正規化
+    // ----------------------------------------------------
+    // 今から処理しようとしているスクリーン上のピクセル位置を
+    // -1～1の範囲に正規化している
+    // ----------------------------------------------------
+    vec2 p = (gl_FragCoord.xy * 2.0 - r)/min(r.x, r.y);
+
+    // camera and ray
+    vec3 cSide = cross(cDir, cUp);
+    float targetDepth = 1.0;
+    vec3 ray = normalize(cSide * p.x + cUp * p.y + cDir * targetDepth);
+
+    // marching loop
+    float tmp, dist;
+    tmp = 0.0;
+    vec3 dPos = cPos;
+    for(int i = 0; i < 256; i++){
+        dist = distFunc(dPos);
+        tmp += dist;
+        dPos = cPos + tmp * ray;
+    }
+
+    // hit check
+    vec3 color;
+    if (abs(dist) < 0.001) {
+        vec3  normal = genNormal(dPos);
+        // 法線の出力
+        if ( bool(u_showNormal) ) {
+            gl_FragColor = vec4(normal,1.0);
+        }
+        // ライティング
+        else {
+            float diff   = clamp(dot(lightDir,normal), 0.1, 1.0);
+
+            // generate tile pattern
+            float u = 1.0 - floor(mod(dPos.x, 2.0));
+            float v = 1.0 - floor(mod(dPos.z, 2.0));
+            if((u == 1.0 && v < 1.0) || (u < 1.0 && v == 1.0)){
+                diff *= 0.7;
+            }
+
+            gl_FragColor = vec4(vec3(diff), 1.0);
+        }
+    }
+    else {
+        gl_FragColor = vec4(vec3(0.0), 1.0);
+    }
+}
