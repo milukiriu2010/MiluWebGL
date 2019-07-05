@@ -1,0 +1,14 @@
+http://glslsandbox.com/e#55845.15
+
+precision mediump float;
+uniform vec2  m;       // mouse
+uniform float t;       // time
+uniform vec2  r;       // resolution
+uniform sampler2D smp; // prev scene
+
+void main(void){
+	// -1.0`1.0‚É³‹K‰»
+	vec2 p = (gl_FragCoord.xy * 2.0 - r) / min(r.x, r.y);
+	//sign‚Í³‚È‚ç+1.0A0.0‚È‚ç0.0A•‰‚È‚ç-1.0‚ğ•Ô‚·B
+	gl_FragColor = vec4(sign(p),0.0,1.0);
+}
