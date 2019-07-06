@@ -1,0 +1,23 @@
+precision mediump float;
+uniform vec2  m;       // mouse
+uniform float t;       // time
+uniform vec2  r;       // resolution
+uniform sampler2D smp; // prev scene
+
+const vec3 g = vec3(0.0,1.0,0.0);
+const vec3 w = vec3(1.0,1.0,1.0);
+const float w10 = 10.0;
+const float w20 = 20.0;
+const float w30 = 30.0;
+
+void main(void){
+	vec2 p = (gl_FragCoord.xy * 2.0 - r) / min(r.x, r.y);
+	vec2 v = gl_FragCoord.xy;
+	
+	if (mod((v.y-v.x)*sin(t),w30) < w10) {
+		gl_FragColor = vec4(g, 1.0);
+	}
+	else {
+		gl_FragColor = vec4(w, 1.0);
+	}
+}

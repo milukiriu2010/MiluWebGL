@@ -1,0 +1,22 @@
+precision mediump float;
+uniform vec2  m;       // mouse
+uniform float t;       // time
+uniform vec2  r;       // resolution
+uniform sampler2D smp; // prev scene
+
+const vec4 red = vec4(1.0,0.0,0.0,1.0);
+const float PI5 = 0.628318;
+
+void main(void){
+	vec2 p = (gl_FragCoord.xy * 2.0 - r) / min(r.x, r.y);
+
+	vec4 smpColor = vec4(1.0,1.0,1.0,1.0);
+	float f = 0.0;
+	for (float i=0.0; i < 10.0; i++) {
+		float s = sin(i*PI5*t) * 0.5;
+		float c = cos(i*PI5*t) * 0.5;
+		f += 0.001/abs(length(p+vec2(c,s))-0.5);
+	}	
+	
+	gl_FragColor = smpColor*f*red;
+}
