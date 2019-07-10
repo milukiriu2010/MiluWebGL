@@ -33,7 +33,7 @@ void main(void){
 		gl_FragColor = vec4(1.0,1.0,1.0,1.0);
 	}
 	else {
-		vec3 rgb = hsv(float(j)/360.0, 1.0, 1.0);
+		vec3 rgb = hsv((float(j)+60.0*sin(2.0*t))/360.0, 1.0, 1.0);
 		gl_FragColor = vec4(rgb, 1.0);
 	}
 }
