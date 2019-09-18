@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!-- https://qiita.com/MasaoBlue/items/1ff943dde6ab5f53ef02 -->
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <script src="js/three.min.js"></script>
+  <script>
+var cube_size = 1;     // cubeのサイズ
+var cube_count = 1;   // cubeの配置数
+var grid_count = 10;   // グリッドの分割数
+var interval = 1000;   // 移動アニメーションの間隔
+var duration = 1000;    // 1回の移動時間
+var stop_rate = 0;  // 移動しない確率
+
+// 初期設定
+var scene = new THREE.Scene();
+var renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
+
+var camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1000 );
+camera.position.set(0, 6, 15);
+
+// マウスで回転できるようにする
+var controls = new THREE.OrbitControls(camera);
+
+// 全方向から色が見えるよう4つのライトを向かい合わせで配置
+var bright = 0.8
+var add_light = (x, y, z) => {
+  var directionalLight = new THREE.DirectionalLight('#ffffff', bright);
+  directionalLight.position.set(x, y, z);
+  scene.add(directionalLight);
+}
+add_light(10, 10, 10);
+add_light(-10, -10, -10);
+add_light(-10, 10, 10);
+add_light(10, -10, -10);
+
+// グリッド(床部分)
+var grid_size = grid_count * cube_size;
+var cube_half = cube_size / 2;
+var grid = new THREE.GridHelper(grid_size, grid_count);
+grid.material.color = new THREE.Color(0xaaaaaa);
+scene.add(grid);
+
+// 回転が見えるようcubeとgridに軸線を付ける
+var line_size = cube_size;
+var add_line = (obj, end_pos, color) => {
+  var start_pos = new THREE.Vector3(0, 0, 0);
+  var g = new THREE.Geometry();
+	g.vertices.push(start_pos);
+	g.vertices.push(end_pos);
+	var material = new THREE.LineBasicMaterial({linewidth: 4, color: color});
+	var line = new THREE.Line(g, material);
+	obj.add(line);
+}
+var grid_half = grid_size / 2;
+add_line(grid, new THREE.Vector3( grid_half, 0, 0 ), "#ff0000");
+add_line(grid, new THREE.Vector3( 0, grid_half, 0 ), "#00ff00");
+add_line(grid, new THREE.Vector3( 0, 0, grid_half ), "#0000ff");
+
+// cubeを配置
+var cubes = [];
+for(var i = 0; i < cube_count; i ++){
+  var geometry = new THREE.BoxGeometry(cube_size, cube_size, cube_size);
+  // 6面のmaterialを指定
+  var materials = [
+    new THREE.MeshLambertMaterial({color: 0xE9546B}), // right
+    new THREE.MeshLambertMaterial({color: 0xE9546B}), // left
+    new THREE.MeshLambertMaterial({color: 0x00A95F}), // top
+    new THREE.MeshLambertMaterial({color: 0x00A95F}), // bottom
+    new THREE.MeshLambertMaterial({color: 0x187FC4}), // front
+    new THREE.MeshLambertMaterial({color: 0x187FC4}), // back
+  ];
+  var cube = new THREE.Mesh( geometry, materials );
+  
+  // Gridの左手前のマスにcubeを配置する
+  var cube_half = cube_size / 2;
+  cube.position.set(
+    cube_half - grid_size / 2 + (cube_size * 4),
+    cube_half,
+    cube_half - grid_size / 2 + (cube_size * 6),
+  );
+  cubes.push(cube);  
+  scene.add(cube);
+  
+  add_line(cube, new THREE.Vector3( line_size, 0, 0 ), "#ff0000");
+  add_line(cube, new THREE.Vector3( 0, line_size, 0 ), "#00ff00");
+  add_line(cube, new THREE.Vector3( 0, 0, line_size ), "#0000ff");
+}
+
+// レンダリング
+function render() {
+    requestAnimationFrame(render);
+    controls.update();
+    renderer.render(scene, camera);
+}
+render();
+
+// render実行後にtween開始
+TWEEN.autoPlay(true);
+  </script>
+</head>
+<body>
+  <canvas id="myCanvas"></canvas>
+</body>
+</html>
